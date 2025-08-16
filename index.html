@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Rhythm Lab - Create Beats with AI</title>
+    <title>AI Rhythm Lab - Create, Record & Export Beats</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
         
@@ -67,6 +67,26 @@
         .subtitle {
             color: var(--text-secondary);
             font-size: 14px;
+        }
+
+        .ai-info-banner {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ai-info-banner h3 {
+            color: var(--ai-color);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .ai-info-banner p {
+            color: var(--text-secondary);
+            font-size: 13px;
         }
 
         .ai-section {
@@ -153,8 +173,14 @@
             border: none;
         }
 
-        .btn.ai:hover:not(:disabled) {
-            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+        .btn.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse-record 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
         }
 
         .btn:disabled {
@@ -185,43 +211,54 @@
             transform: scale(1.05);
         }
 
-        .ai-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 10px 15px;
+        .sound-kits-section {
             background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sound-kits-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent-secondary);
+        }
+
+        .sound-kits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .kit-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
             border-radius: 10px;
-            font-size: 13px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .ai-status.loading {
-            background: rgba(124, 58, 237, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.3);
+        .kit-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
-        .ai-status.success {
-            background: rgba(107, 207, 127, 0.1);
-            border: 1px solid rgba(107, 207, 127, 0.3);
+        .kit-btn.active {
+            background: var(--gradient-ai);
+            border-color: var(--ai-color);
         }
 
-        .ai-status.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .kit-btn .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
         }
 
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(124, 58, 237, 0.3);
-            border-top-color: var(--ai-color);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .kit-btn .name {
+            font-size: 12px;
+            font-weight: 500;
         }
 
         .transport {
@@ -240,6 +277,7 @@
         .transport-controls {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .tempo-control {
@@ -275,6 +313,33 @@
             cursor: pointer;
             box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
             border: none;
+        }
+
+        .recording-timer {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+        }
+
+        .recording-timer.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         .sequencer {
@@ -332,15 +397,6 @@
             100% { transform: scale(1); }
         }
 
-        .step.ai-suggested {
-            border-color: var(--ai-color);
-            box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
-        }
-
-        .step.ai-suggested.active {
-            background: linear-gradient(135deg, var(--ai-color), var(--accent));
-        }
-
         .step:nth-child(4n+2) {
             margin-left: 4px;
         }
@@ -377,6 +433,19 @@
             color: var(--text-secondary);
         }
 
+        .export-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .export-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         @media (max-width: 768px) {
             .track {
                 grid-template-columns: 60px repeat(16, 1fr);
@@ -397,6 +466,10 @@
             .transport {
                 justify-content: center;
             }
+
+            .sound-kits-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
@@ -404,13 +477,18 @@
     <div class="app-container">
         <header class="header">
             <h1 class="logo">AI RHYTHM LAB</h1>
-            <p class="subtitle">Powered by Browser AI • Create beats with natural language</p>
+            <p class="subtitle">Create • Record • Export with AI-Powered Beat Generation</p>
         </header>
+
+        <div class="ai-info-banner">
+            <h3>🤖 AI Technology</h3>
+            <p>Using Pattern Recognition AI - Analyzes text to generate genre-specific beats. Runs 100% in your browser!</p>
+        </div>
 
         <div class="ai-section">
             <div class="ai-header">
                 <span class="ai-badge">✨ AI Assistant</span>
-                <span style="color: var(--text-secondary); font-size: 12px;">Pattern Generation Engine</span>
+                <span style="color: var(--text-secondary); font-size: 12px;">Natural Language Beat Generation</span>
             </div>
 
             <div class="ai-controls">
@@ -427,18 +505,15 @@
                 </div>
 
                 <div class="ai-suggestions">
-                    <span style="color: var(--text-secondary); font-size: 12px; margin-right: 10px;">Try:</span>
+                    <span style="color: var(--text-secondary); font-size: 12px; margin-right: 10px;">Quick ideas:</span>
                     <div class="suggestion-chip" data-prompt="hip hop beat with 808 drums">Hip Hop 808</div>
                     <div class="suggestion-chip" data-prompt="4/4 house beat at 128 bpm">House 128 BPM</div>
-                    <div class="suggestion-chip" data-prompt="drum and bass pattern">Drum & Bass</div>
+                    <div class="suggestion-chip" data-prompt="drum and bass pattern 174 bpm">Drum & Bass</div>
                     <div class="suggestion-chip" data-prompt="latin salsa rhythm">Latin Salsa</div>
                     <div class="suggestion-chip" data-prompt="trap hi-hats with kick pattern">Trap Pattern</div>
                     <div class="suggestion-chip" data-prompt="jazz brush drums">Jazz Brushes</div>
-                </div>
-
-                <div class="ai-status" id="aiStatus" style="display: none;">
-                    <div class="spinner"></div>
-                    <span>AI is thinking...</span>
+                    <div class="suggestion-chip" data-prompt="boom bap old school">Boom Bap</div>
+                    <div class="suggestion-chip" data-prompt="reggaeton beat">Reggaeton</div>
                 </div>
             </div>
 
@@ -462,16 +537,61 @@
             </div>
         </div>
 
+        <div class="sound-kits-section">
+            <div class="sound-kits-header">🎹 Sound Kits</div>
+            <div class="sound-kits-grid">
+                <div class="kit-btn active" data-kit="acoustic">
+                    <div class="icon">🥁</div>
+                    <div class="name">Acoustic</div>
+                </div>
+                <div class="kit-btn" data-kit="electronic">
+                    <div class="icon">🎛️</div>
+                    <div class="name">Electronic</div>
+                </div>
+                <div class="kit-btn" data-kit="808">
+                    <div class="icon">🔊</div>
+                    <div class="name">808</div>
+                </div>
+                <div class="kit-btn" data-kit="vintage">
+                    <div class="icon">📻</div>
+                    <div class="name">Vintage</div>
+                </div>
+                <div class="kit-btn" data-kit="lofi">
+                    <div class="icon">📼</div>
+                    <div class="name">Lo-Fi</div>
+                </div>
+                <div class="kit-btn" data-kit="trap">
+                    <div class="icon">💎</div>
+                    <div class="name">Trap</div>
+                </div>
+            </div>
+        </div>
+
         <div class="transport">
             <div class="transport-controls">
                 <button class="btn" id="playBtn">▶ Play</button>
                 <button class="btn" id="stopBtn">■ Stop</button>
-                <button class="btn" id="clearBtn">Clear</button>
+                <button class="btn" id="clearBtn">🗑 Clear</button>
+                <button class="btn" id="recordBtn">⏺ Record</button>
+            </div>
+            <div class="recording-timer" id="recordingTimer">
+                <div class="recording-dot"></div>
+                <span id="recordingTime">00:00</span>
             </div>
             <div class="tempo-control">
                 <span>BPM</span>
                 <input type="range" class="tempo-slider" id="tempoSlider" min="60" max="180" value="120">
                 <span id="tempoValue">120</span>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <div class="export-controls">
+                <button class="btn" id="exportWavBtn">💾 Export WAV</button>
+                <button class="btn" id="exportMidiBtn">🎹 Export MIDI</button>
+                <button class="btn" id="exportJsonBtn">📄 Save Pattern</button>
+                <button class="btn" id="loadJsonBtn">📂 Load Pattern</button>
+                <input type="file" id="fileInput" style="display: none;" accept=".json">
             </div>
         </div>
 
@@ -508,16 +628,78 @@
         let currentStep = 0;
         let intervalId = null;
         let pattern = {};
+        let currentKit = 'acoustic';
+        
+        // Recording state
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordingStartTime = 0;
+        let recordingTimerInterval = null;
+        let streamDestination = null;
         
         // Initialize empty pattern
         instruments.forEach(inst => {
             pattern[inst] = new Array(STEPS).fill(0);
         });
 
-        // AI Pattern Generation
+        // Sound Kit Definitions
+        const soundKits = {
+            acoustic: {
+                kick: { freq: 60, decay: 0.5, pitch: 1 },
+                snare: { freq: 200, decay: 0.2, pitch: 1 },
+                hihat: { freq: 800, decay: 0.05, pitch: 1 },
+                openhat: { freq: 800, decay: 0.3, pitch: 1 },
+                clap: { freq: 1000, decay: 0.1, pitch: 1 },
+                percussion: { freq: 400, decay: 0.15, pitch: 1 }
+            },
+            electronic: {
+                kick: { freq: 50, decay: 0.7, pitch: 0.8 },
+                snare: { freq: 250, decay: 0.15, pitch: 1.2 },
+                hihat: { freq: 1200, decay: 0.03, pitch: 1.5 },
+                openhat: { freq: 1200, decay: 0.25, pitch: 1.5 },
+                clap: { freq: 1500, decay: 0.08, pitch: 1.3 },
+                percussion: { freq: 600, decay: 0.1, pitch: 1.1 }
+            },
+            '808': {
+                kick: { freq: 35, decay: 1.5, pitch: 0.7 },
+                snare: { freq: 300, decay: 0.25, pitch: 0.9 },
+                hihat: { freq: 1000, decay: 0.02, pitch: 1.2 },
+                openhat: { freq: 1000, decay: 0.4, pitch: 1.2 },
+                clap: { freq: 1200, decay: 0.12, pitch: 1.1 },
+                percussion: { freq: 500, decay: 0.2, pitch: 0.95 }
+            },
+            vintage: {
+                kick: { freq: 70, decay: 0.4, pitch: 1.1 },
+                snare: { freq: 180, decay: 0.18, pitch: 0.95 },
+                hihat: { freq: 900, decay: 0.04, pitch: 1.05 },
+                openhat: { freq: 900, decay: 0.35, pitch: 1.05 },
+                clap: { freq: 1100, decay: 0.09, pitch: 1.02 },
+                percussion: { freq: 450, decay: 0.12, pitch: 1.08 }
+            },
+            lofi: {
+                kick: { freq: 55, decay: 0.6, pitch: 0.9 },
+                snare: { freq: 220, decay: 0.16, pitch: 0.85 },
+                hihat: { freq: 700, decay: 0.06, pitch: 0.9 },
+                openhat: { freq: 700, decay: 0.28, pitch: 0.9 },
+                clap: { freq: 950, decay: 0.11, pitch: 0.88 },
+                percussion: { freq: 380, decay: 0.14, pitch: 0.92 }
+            },
+            trap: {
+                kick: { freq: 40, decay: 0.8, pitch: 0.75 },
+                snare: { freq: 280, decay: 0.2, pitch: 1.15 },
+                hihat: { freq: 1100, decay: 0.025, pitch: 1.3 },
+                openhat: { freq: 1100, decay: 0.35, pitch: 1.3 },
+                clap: { freq: 1300, decay: 0.1, pitch: 1.25 },
+                percussion: { freq: 550, decay: 0.18, pitch: 1.05 }
+            }
+        };
+
+        // AI Pattern Generation (Pattern Recognition Engine)
         class BeatAI {
             constructor() {
-                this.styles = {
+                // Pattern database for genre recognition
+                this.patterns = {
                     'hip hop': {
                         kick: [1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
                         snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
@@ -563,96 +745,112 @@
                         percussion: [0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,0],
                         bpm: 174
                     },
-                    'jazz': {
-                        kick: [1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0],
-                        snare: [0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0],
-                        hihat: [1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,0],
+                    'boom bap': {
+                        kick: [1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
+                        snare: [0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0],
+                        hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
                         openhat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         clap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         percussion: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                        bpm: 120
+                        bpm: 95
                     },
-                    'latin': {
-                        kick: [1,0,0,1,0,0,1,0,0,0,1,0,1,0,0,0],
-                        snare: [0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0],
-                        hihat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                        openhat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                        clap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                        percussion: [1,0,1,1,0,1,1,0,1,0,1,1,0,1,0,1],
-                        bpm: 100
+                    'reggaeton': {
+                        kick: [1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0],
+                        snare: [0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0],
+                        hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                        openhat: [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+                        clap: [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+                        percussion: [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
+                        bpm: 95
                     }
                 };
+            }
+
+            analyzePrompt(prompt) {
+                const keywords = prompt.toLowerCase().split(' ');
+                const scores = {};
+                
+                // Score each pattern based on keyword matching
+                for (const [genre, data] of Object.entries(this.patterns)) {
+                    scores[genre] = 0;
+                    const genreWords = genre.split(' ');
+                    
+                    genreWords.forEach(word => {
+                        if (keywords.includes(word)) scores[genre] += 10;
+                    });
+                    
+                    // Check for related terms
+                    if (genre === 'hip hop' && (keywords.includes('808') || keywords.includes('rap'))) {
+                        scores[genre] += 8;
+                    }
+                    if (genre === 'drum and bass' && (keywords.includes('dnb') || keywords.includes('jungle'))) {
+                        scores[genre] += 8;
+                    }
+                    if (genre === 'boom bap' && (keywords.includes('old') || keywords.includes('school'))) {
+                        scores[genre] += 5;
+                    }
+                }
+                
+                // Find best match
+                const bestMatch = Object.entries(scores).reduce((a, b) => 
+                    scores[a[0]] > scores[b[0]] ? a : b
+                )[0];
+                
+                return scores[bestMatch] > 0 ? bestMatch : null;
             }
 
             generateFromPrompt(prompt) {
-                const lowercasePrompt = prompt.toLowerCase();
-                
-                // Check for BPM in prompt
-                const bpmMatch = lowercasePrompt.match(/(\d+)\s*bpm/);
+                // Extract BPM if specified
+                const bpmMatch = prompt.toLowerCase().match(/(\d+)\s*bpm/);
                 const requestedBpm = bpmMatch ? parseInt(bpmMatch[1]) : null;
-
-                // Find matching style
-                for (const [style, data] of Object.entries(this.styles)) {
-                    if (lowercasePrompt.includes(style) || 
-                        (style === 'hip hop' && (lowercasePrompt.includes('hip') || lowercasePrompt.includes('808'))) ||
-                        (style === 'drum and bass' && (lowercasePrompt.includes('dnb') || lowercasePrompt.includes('jungle') || lowercasePrompt.includes('d&b')))) {
-                        return this.createPattern(data, requestedBpm);
-                    }
+                
+                // Analyze prompt to find best matching pattern
+                const matchedGenre = this.analyzePrompt(prompt);
+                
+                if (matchedGenre && this.patterns[matchedGenre]) {
+                    const pattern = JSON.parse(JSON.stringify(this.patterns[matchedGenre]));
+                    return {
+                        pattern: pattern,
+                        bpm: requestedBpm || pattern.bpm,
+                        genre: matchedGenre
+                    };
                 }
-
-                // Check for salsa
-                if (lowercasePrompt.includes('salsa') || lowercasePrompt.includes('latin')) {
-                    return this.createPattern(this.styles.latin, requestedBpm);
-                }
-
-                // Default to random pattern
-                return this.createRandomPattern(requestedBpm || 120);
+                
+                // If no match, generate a random pattern
+                return this.generateRandom(requestedBpm || 120);
             }
 
-            createPattern(styleData, customBpm = null) {
-                const newPattern = {};
+            generateRandom(bpm) {
+                const pattern = {};
                 instruments.forEach(inst => {
-                    newPattern[inst] = [...(styleData[inst] || new Array(STEPS).fill(0))];
-                });
-                
-                return {
-                    pattern: newPattern,
-                    bpm: customBpm || styleData.bpm || 120
-                };
-            }
-
-            createRandomPattern(bpm) {
-                const newPattern = {};
-                
-                const probabilities = {
-                    kick: 0.25,
-                    snare: 0.15,
-                    hihat: 0.4,
-                    openhat: 0.1,
-                    clap: 0.1,
-                    percussion: 0.2
-                };
-                
-                instruments.forEach(inst => {
-                    newPattern[inst] = new Array(STEPS).fill(0);
+                    pattern[inst] = new Array(STEPS).fill(0);
                     
-                    for (let i = 0; i < STEPS; i++) {
-                        if (Math.random() < probabilities[inst]) {
-                            newPattern[inst][i] = 1;
+                    // Random generation with musical constraints
+                    if (inst === 'kick') {
+                        // Kicks on downbeats
+                        pattern[inst][0] = 1;
+                        pattern[inst][8] = Math.random() > 0.3 ? 1 : 0;
+                        for (let i = 4; i < STEPS; i += 4) {
+                            if (Math.random() > 0.5) pattern[inst][i] = 1;
+                        }
+                    } else if (inst === 'snare') {
+                        // Snares on 2 and 4
+                        pattern[inst][4] = 1;
+                        pattern[inst][12] = 1;
+                    } else if (inst === 'hihat') {
+                        // Hi-hats more frequent
+                        for (let i = 0; i < STEPS; i++) {
+                            if (Math.random() > 0.6) pattern[inst][i] = 1;
+                        }
+                    } else {
+                        // Other instruments sparse
+                        for (let i = 0; i < STEPS; i++) {
+                            if (Math.random() > 0.85) pattern[inst][i] = 1;
                         }
                     }
                 });
                 
-                // Ensure basic beat structure
-                newPattern.kick[0] = 1;
-                newPattern.kick[8] = 1;
-                newPattern.snare[4] = 1;
-                newPattern.snare[12] = 1;
-                
-                return {
-                    pattern: newPattern,
-                    bpm: bpm
-                };
+                return { pattern, bpm, genre: 'custom' };
             }
 
             humanize(pattern) {
@@ -660,13 +858,9 @@
                 
                 instruments.forEach(inst => {
                     for (let i = 0; i < STEPS; i++) {
-                        // Randomly remove some hits for variation
-                        if (humanized[inst][i] && Math.random() < 0.05) {
-                            humanized[inst][i] = 0;
-                        }
-                        // Randomly add some hits
-                        if (!humanized[inst][i] && Math.random() < 0.03) {
-                            humanized[inst][i] = 1;
+                        // Small chance to add/remove hits
+                        if (Math.random() < 0.05) {
+                            humanized[inst][i] = humanized[inst][i] ? 0 : 1;
                         }
                     }
                 });
@@ -678,19 +872,19 @@
                 const filled = JSON.parse(JSON.stringify(pattern));
                 
                 instruments.forEach(inst => {
-                    const activeSteps = filled[inst].filter(s => s).length;
+                    const activeCount = filled[inst].filter(s => s).length;
                     
-                    if (activeSteps === 0) {
-                        // Add default pattern if empty
+                    if (activeCount === 0) {
+                        // Add basic pattern if empty
                         if (inst === 'kick') {
-                            filled.kick[0] = 1;
-                            filled.kick[8] = 1;
+                            filled[inst][0] = 1;
+                            filled[inst][8] = 1;
                         } else if (inst === 'snare') {
-                            filled.snare[4] = 1;
-                            filled.snare[12] = 1;
+                            filled[inst][4] = 1;
+                            filled[inst][12] = 1;
                         } else if (inst === 'hihat') {
                             for (let i = 0; i < STEPS; i += 2) {
-                                filled.hihat[i] = 1;
+                                filled[inst][i] = 1;
                             }
                         }
                     }
@@ -704,7 +898,7 @@
                 
                 instruments.forEach(inst => {
                     for (let i = 0; i < STEPS; i++) {
-                        if (Math.random() < 0.15) { // 15% chance to change
+                        if (Math.random() < 0.15) {
                             variation[inst][i] = variation[inst][i] ? 0 : 1;
                         }
                     }
@@ -716,49 +910,30 @@
             analyzePattern(pattern) {
                 const analysis = {
                     density: {},
-                    style: '',
-                    bpm_suggestion: 120,
-                    description: ''
+                    complexity: 0,
+                    genre: 'Unknown',
+                    suggestions: []
                 };
                 
-                // Calculate density
+                let totalHits = 0;
                 instruments.forEach(inst => {
-                    const active = pattern[inst].filter(s => s).length;
-                    analysis.density[inst] = ((active / STEPS) * 100).toFixed(1) + '%';
+                    const hits = pattern[inst].filter(s => s).length;
+                    analysis.density[inst] = ((hits / STEPS) * 100).toFixed(1) + '%';
+                    totalHits += hits;
                 });
                 
-                // Detect style
-                const kickCount = pattern.kick.filter(s => s).length;
-                const hihatCount = pattern.hihat.filter(s => s).length;
+                analysis.complexity = totalHits;
                 
-                if (kickCount === 4 && pattern.kick[0] && pattern.kick[4] && pattern.kick[8] && pattern.kick[12]) {
-                    analysis.style = 'Four-on-the-floor (House/Techno)';
-                    analysis.bpm_suggestion = 128;
-                } else if (hihatCount > 12) {
-                    analysis.style = 'Busy hi-hats (Trap/DnB)';
-                    analysis.bpm_suggestion = 140;
-                } else if (kickCount < 4) {
-                    analysis.style = 'Minimal';
-                    analysis.bpm_suggestion = 125;
+                if (totalHits < 10) {
+                    analysis.genre = 'Minimal';
+                    analysis.suggestions.push('Try adding more hi-hats for groove');
+                } else if (totalHits < 25) {
+                    analysis.genre = 'Moderate';
+                    analysis.suggestions.push('Good balance! Maybe add some percussion');
                 } else {
-                    analysis.style = 'Custom/Experimental';
+                    analysis.genre = 'Complex';
+                    analysis.suggestions.push('Very busy! Consider removing some elements');
                 }
-                
-                // Create description
-                const totalActive = instruments.reduce((sum, inst) => 
-                    sum + pattern[inst].filter(s => s).length, 0);
-                
-                if (totalActive === 0) {
-                    analysis.description = 'Empty pattern. Add some beats to get started!';
-                } else if (totalActive < 10) {
-                    analysis.description = `Minimal pattern with ${analysis.style} characteristics. Try adding more elements!`;
-                } else if (totalActive < 30) {
-                    analysis.description = `${analysis.style} pattern with moderate complexity. Good groove!`;
-                } else {
-                    analysis.description = `Dense ${analysis.style} pattern. Very complex rhythm!`;
-                }
-                
-                analysis.description += ` Suggested BPM: ${analysis.bpm_suggestion}`;
                 
                 return analysis;
             }
@@ -766,6 +941,16 @@
 
         // Initialize AI
         const beatAI = new BeatAI();
+
+        // Initialize audio context
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create destination for recording
+                streamDestination = audioContext.createMediaStreamDestination();
+            }
+        }
 
         // Create sequencer grid
         function createSequencer() {
@@ -793,17 +978,9 @@
             pattern[inst][step] = pattern[inst][step] ? 0 : 1;
             e.target.classList.toggle('active');
             
-            // Play sound preview when clicking
             if (pattern[inst][step]) {
                 initAudioContext();
                 playSound(inst);
-            }
-        }
-
-        // Initialize audio context
-        function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
 
@@ -823,54 +1000,64 @@
             });
         }
 
-        // Audio synthesis
-        function playSound(inst) {
+        // Enhanced audio synthesis with different kits
+        function playSound(inst, toRecording = false) {
             if (!audioContext) return;
             
             const now = audioContext.currentTime;
+            const kit = soundKits[currentKit];
+            const settings = kit[inst];
             
             try {
+                const destination = toRecording && streamDestination ? streamDestination : audioContext.destination;
+                
                 if (inst === 'kick') {
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.frequency.setValueAtTime(settings.freq * settings.pitch, now);
+                    osc.frequency.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     gain.gain.setValueAtTime(1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     osc.connect(gain);
-                    gain.connect(audioContext.destination);
+                    gain.connect(destination);
+                    if (toRecording && streamDestination) {
+                        gain.connect(audioContext.destination);
+                    }
                     
                     osc.start(now);
-                    osc.stop(now + 0.5);
+                    osc.stop(now + settings.decay);
                     
-                } else if (inst === 'snare') {
-                    // Oscillator part
+                } else if (inst === 'snare' || inst === 'clap') {
+                    // Tone
                     const osc = audioContext.createOscillator();
                     const oscGain = audioContext.createGain();
                     
                     osc.type = 'triangle';
-                    osc.frequency.value = 200;
+                    osc.frequency.value = settings.freq * settings.pitch;
                     
                     oscGain.gain.setValueAtTime(0.3, now);
-                    oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    oscGain.gain.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     osc.connect(oscGain);
-                    oscGain.connect(audioContext.destination);
+                    oscGain.connect(destination);
+                    if (toRecording && streamDestination) {
+                        oscGain.connect(audioContext.destination);
+                    }
                     
                     osc.start(now);
-                    osc.stop(now + 0.1);
+                    osc.stop(now + settings.decay);
                     
-                    // Noise part
-                    const bufferSize = audioContext.sampleRate * 0.1;
+                    // Noise
+                    const bufferSize = audioContext.sampleRate * settings.decay;
                     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
                     const output = buffer.getChannelData(0);
                     
                     for (let i = 0; i < bufferSize; i++) {
-                        output[i] = Math.random() * 2 - 1;
+                        output[i] = (Math.random() * 2 - 1) * 0.5;
                     }
                     
                     const noise = audioContext.createBufferSource();
@@ -879,10 +1066,13 @@
                     noise.buffer = buffer;
                     
                     noiseGain.gain.setValueAtTime(0.2, now);
-                    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     noise.connect(noiseGain);
-                    noiseGain.connect(audioContext.destination);
+                    noiseGain.connect(destination);
+                    if (toRecording && streamDestination) {
+                        noiseGain.connect(audioContext.destination);
+                    }
                     
                     noise.start(now);
                     
@@ -890,51 +1080,39 @@
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     
-                    osc.type = 'square';
-                    osc.frequency.value = 800;
-                    
-                    const duration = inst === 'openhat' ? 0.3 : 0.05;
+                    osc.type = currentKit === 'electronic' ? 'sawtooth' : 'square';
+                    osc.frequency.value = settings.freq * settings.pitch;
                     
                     gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     osc.connect(gain);
-                    gain.connect(audioContext.destination);
+                    gain.connect(destination);
+                    if (toRecording && streamDestination) {
+                        gain.connect(audioContext.destination);
+                    }
                     
                     osc.start(now);
-                    osc.stop(now + duration);
-                    
-                } else if (inst === 'clap') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    
-                    osc.type = 'sawtooth';
-                    osc.frequency.value = 1000;
-                    
-                    gain.gain.setValueAtTime(0.3, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
-                    
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    
-                    osc.start(now);
-                    osc.stop(now + 0.03);
+                    osc.stop(now + settings.decay);
                     
                 } else if (inst === 'percussion') {
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     
                     osc.type = 'triangle';
-                    osc.frequency.value = 400;
+                    osc.frequency.value = settings.freq * settings.pitch;
                     
                     gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + settings.decay);
                     
                     osc.connect(gain);
-                    gain.connect(audioContext.destination);
+                    gain.connect(destination);
+                    if (toRecording && streamDestination) {
+                        gain.connect(audioContext.destination);
+                    }
                     
                     osc.start(now);
-                    osc.stop(now + 0.15);
+                    osc.stop(now + settings.decay);
                 }
             } catch (error) {
                 console.error('Error playing sound:', error);
@@ -943,24 +1121,21 @@
 
         // Sequencer playback
         function advanceSequencer() {
-            // Remove playing class from all steps
             document.querySelectorAll('.step').forEach(el => {
                 el.classList.remove('playing');
             });
             
-            // Add playing class and play sounds for current step
             instruments.forEach(inst => {
                 const el = document.querySelector(`[data-instrument="${inst}"][data-step="${currentStep}"]`);
                 if (el) {
                     el.classList.add('playing');
                     
                     if (pattern[inst][currentStep]) {
-                        playSound(inst);
+                        playSound(inst, isRecording);
                     }
                 }
             });
             
-            // Move to next step
             currentStep = (currentStep + 1) % STEPS;
         }
 
@@ -971,7 +1146,7 @@
             if (!isPlaying) {
                 isPlaying = true;
                 const tempo = parseInt(document.getElementById('tempoSlider').value);
-                const interval = (60 / tempo / 4) * 1000; // Convert BPM to milliseconds for 16th notes
+                const interval = (60 / tempo / 4) * 1000;
                 
                 document.getElementById('playBtn').textContent = '⏸ Pause';
                 
@@ -1003,100 +1178,193 @@
             updatePattern();
         }
 
-        // AI Functions
+        // Recording functions
+        function startRecording() {
+            initAudioContext();
+            
+            if (!streamDestination) return;
+            
+            recordedChunks = [];
+            
+            mediaRecorder = new MediaRecorder(streamDestination.stream);
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `beat-${Date.now()}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordingStartTime = Date.now();
+            
+            // Update UI
+            document.getElementById('recordBtn').classList.add('recording');
+            document.getElementById('recordBtn').textContent = '⏹ Stop Recording';
+            document.getElementById('recordingTimer').classList.add('active');
+            
+            // Start timer
+            recordingTimerInterval = setInterval(updateRecordingTimer, 100);
+            
+            // Auto-play if not playing
+            if (!isPlaying) {
+                play();
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Update UI
+                document.getElementById('recordBtn').classList.remove('recording');
+                document.getElementById('recordBtn').textContent = '⏺ Record';
+                document.getElementById('recordingTimer').classList.remove('active');
+                
+                // Stop timer
+                clearInterval(recordingTimerInterval);
+            }
+        }
+
+        function updateRecordingTimer() {
+            const elapsed = Date.now() - recordingStartTime;
+            const seconds = Math.floor(elapsed / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const displaySeconds = seconds % 60;
+            
+            document.getElementById('recordingTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${displaySeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Export functions
+        function exportToJSON() {
+            const data = {
+                pattern: pattern,
+                bpm: document.getElementById('tempoSlider').value,
+                kit: currentKit,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `beat-pattern-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadFromJSON(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.pattern) {
+                        pattern = data.pattern;
+                        updatePattern();
+                    }
+                    
+                    if (data.bpm) {
+                        document.getElementById('tempoSlider').value = data.bpm;
+                        document.getElementById('tempoValue').textContent = data.bpm;
+                    }
+                    
+                    if (data.kit) {
+                        currentKit = data.kit;
+                        updateKitButtons();
+                    }
+                    
+                    alert('Pattern loaded successfully!');
+                } catch (error) {
+                    alert('Error loading pattern file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateKitButtons() {
+            document.querySelectorAll('.kit-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.kit === currentKit) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // AI Generation
         async function generateBeat() {
             const prompt = document.getElementById('aiPrompt').value.trim();
             if (!prompt) {
-                showStatus('Please enter a beat description', 'error');
+                alert('Please enter a beat description');
                 return;
             }
             
-            const statusEl = document.getElementById('aiStatus');
             const generateBtn = document.getElementById('generateBtn');
-            
-            // Show loading state
-            statusEl.style.display = 'flex';
-            statusEl.className = 'ai-status loading';
-            statusEl.innerHTML = '<div class="spinner"></div><span>AI is generating your beat...</span>';
             generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span>⏳</span> Generating...';
             
-            // Simulate AI processing with setTimeout
             setTimeout(() => {
                 try {
-                    // Generate pattern using AI
                     const result = beatAI.generateFromPrompt(prompt);
                     pattern = result.pattern;
                     updatePattern();
                     
-                    // Update BPM if suggested
                     if (result.bpm) {
                         document.getElementById('tempoSlider').value = result.bpm;
                         document.getElementById('tempoValue').textContent = result.bpm;
                     }
                     
-                    // Add AI suggestion animation
-                    document.querySelectorAll('.step.active').forEach(el => {
-                        el.classList.add('ai-suggested');
-                        setTimeout(() => {
-                            el.classList.remove('ai-suggested');
-                        }, 2000);
-                    });
+                    generateBtn.innerHTML = '<span>✨</span> Generate Beat';
+                    generateBtn.disabled = false;
                     
-                    // Show success
-                    statusEl.className = 'ai-status success';
-                    statusEl.innerHTML = '<span>✅ Beat generated successfully!</span>';
-                    
-                    setTimeout(() => {
-                        statusEl.style.display = 'none';
-                    }, 3000);
+                    // Show what was generated
+                    alert(`Generated ${result.genre} beat at ${result.bpm} BPM!`);
                     
                 } catch (error) {
                     console.error('Error generating beat:', error);
-                    statusEl.className = 'ai-status error';
-                    statusEl.innerHTML = '<span>❌ Failed to generate beat. Try again!</span>';
-                    
-                    setTimeout(() => {
-                        statusEl.style.display = 'none';
-                    }, 3000);
-                    
-                } finally {
+                    generateBtn.innerHTML = '<span>✨</span> Generate Beat';
                     generateBtn.disabled = false;
                 }
-            }, 1500);
-        }
-
-        function showStatus(message, type = 'success') {
-            const statusEl = document.getElementById('aiStatus');
-            statusEl.style.display = 'flex';
-            statusEl.className = `ai-status ${type}`;
-            
-            const icon = type === 'success' ? '✨' : '❌';
-            statusEl.innerHTML = `<span>${icon} ${message}</span>`;
-            
-            setTimeout(() => {
-                statusEl.style.display = 'none';
-            }, 3000);
+            }, 1000);
         }
 
         // Event Listeners
         document.getElementById('playBtn').addEventListener('click', play);
         document.getElementById('stopBtn').addEventListener('click', stop);
         document.getElementById('clearBtn').addEventListener('click', clear);
+        
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
+        
         document.getElementById('generateBtn').addEventListener('click', generateBeat);
         
-        // Enter key to generate
         document.getElementById('aiPrompt').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 generateBeat();
             }
         });
         
-        // Tempo slider
         document.getElementById('tempoSlider').addEventListener('input', (e) => {
             const tempo = e.target.value;
             document.getElementById('tempoValue').textContent = tempo;
             
-            // Restart playback with new tempo if playing
             if (isPlaying) {
                 pause();
                 play();
@@ -1111,43 +1379,75 @@
             });
         });
         
+        // Sound kit selection
+        document.querySelectorAll('.kit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentKit = btn.dataset.kit;
+                updateKitButtons();
+            });
+        });
+        
         // AI Features
         document.getElementById('humanizeBtn').addEventListener('click', () => {
             pattern = beatAI.humanize(pattern);
             updatePattern();
-            showStatus('Added human feel to the beat!');
         });
         
         document.getElementById('fillBtn').addEventListener('click', () => {
             pattern = beatAI.autoFill(pattern);
             updatePattern();
-            showStatus('Auto-filled empty tracks!');
         });
         
         document.getElementById('variationBtn').addEventListener('click', () => {
             pattern = beatAI.createVariation(pattern);
             updatePattern();
-            showStatus('Created a variation!');
         });
         
         document.getElementById('analyzeBtn').addEventListener('click', () => {
             const analysis = beatAI.analyzePattern(pattern);
             
-            let densityText = 'Track Density:\n';
+            let message = `Pattern Analysis\n\n`;
+            message += `Complexity: ${analysis.complexity} hits\n`;
+            message += `Style: ${analysis.genre}\n\n`;
+            message += `Track Density:\n`;
+            
             for (const [inst, density] of Object.entries(analysis.density)) {
-                densityText += `${inst}: ${density}\n`;
+                message += `${inst}: ${density}\n`;
             }
             
-            alert(`Pattern Analysis\n\n${analysis.description}\n\n${densityText}`);
+            if (analysis.suggestions.length > 0) {
+                message += `\nSuggestions:\n`;
+                analysis.suggestions.forEach(s => {
+                    message += `• ${s}\n`;
+                });
+            }
+            
+            alert(message);
         });
         
-        // Initialize the sequencer on page load
-        createSequencer();
+        // Export/Import
+        document.getElementById('exportWavBtn').addEventListener('click', () => {
+            alert('WAV export requires recording. Use the Record button to capture your beat, then it will download automatically!');
+        });
         
-        // Show welcome message
-        setTimeout(() => {
-            showStatus('Welcome! Describe a beat or click the grid to start creating!');
-        }, 500);
+        document.getElementById('exportMidiBtn').addEventListener('click', () => {
+            alert('MIDI export coming soon! For now, use Save Pattern to export as JSON.');
+        });
+        
+        document.getElementById('exportJsonBtn').addEventListener('click', exportToJSON);
+        
+        document.getElementById('loadJsonBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadFromJSON(e.target.files[0]);
+            }
+        });
+        
+        // Initialize
+        createSequencer();
     </script>
 </body>
 </html>
